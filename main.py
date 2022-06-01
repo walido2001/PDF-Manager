@@ -1,4 +1,3 @@
-from queue import Empty
 import PySimpleGUI as sg
 import pdfFunctions as pydf
 
@@ -21,7 +20,7 @@ while True:
         Row1 = [
             sg.Text("Select File: "), 
             sg.In(size = (30, 5) ,enable_events=True, key="_FILECHOSEN_"), 
-            sg.FileBrowse(), 
+            sg.FileBrowse(file_types=(("PDF", "*.pdf"),)), 
             sg.Button("Add", enable_events=True, key="_ADDFILE_"),
             sg.Button("Remove", enable_events=True, key="_REMOVEFILE_")
         ]
@@ -29,7 +28,7 @@ while True:
             [Row1],
             [sg.Text("Selected Files")],
             [sg.Listbox(values=[], size=(65, 5), key="_FILELIST_")],
-            [sg.Button("Merge",enable_events=True ,key="_MERGEFILE_")]
+            [sg.Button("Merge",enable_events=True ,key="_MERGEFILE_"), sg.FolderBrowse("Save to", target="_OUTPUT_"), sg.In(visible=False, key="_OUTPUT_")]
         ]
 
         HomeWindow.hide()
@@ -55,8 +54,15 @@ while True:
                     MergeDocsWindow["_FILELIST_"].update(MergeFileList)
             elif event2 == "_MERGEFILE_":
                 try:
-                    print(MergeFileList)
-                    pydf.merge(MergeFileList)
+                    # print(MergeFileList)
+                    outputLocation = values2["_OUTPUT_"]
+                    print("Saving to: ", outputLocation)
+                    # if outputLocation != []:
+                    #     print("Saving to the desktop")
+                    #     pydf.merge(MergeFileList, None)
+                    # else:
+                        # print("Saving to the specified directory")
+                    pydf.merge(MergeFileList, outputLocation)
                 except:
                     sg.popup("Error Occurred")
                 MergeFileList.clear()
@@ -73,21 +79,3 @@ while True:
     if event == sg.WIN_CLOSED:
             HomeWindow.close()
             break
-    # if event == "Remove Pages" and not RemovePagesActive:
-    #     print("Remove Pages Button has been clicked !")
-    #     RemovePagesLayout = [
-    #         [sg.Text("Remove Pages Window")]
-    #     ]
-    #     RemovePagesWindow = sg.Window("Remove Pages", RemovePagesLayout)
-    #     RemovePagesActive = True
-   
-    # if RemovePagesActive:
-    #     event3, values3 = RemovePagesWindow.read()
-
-    #     if event3 == sg.WIN_CLOSED:
-    #         RemovePagesActive = False
-    #         RemovePagesWindow.close()
-    #         break
-    
-
-    
